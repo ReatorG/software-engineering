@@ -1,0 +1,20 @@
+{
+  "metadata": {
+    "llamada_id": "02143a98-8a2a-49a6-9b3c-b6377edbe009",
+    "customer_name": "María García",
+    "operator_name": "Juan Pérez",
+    "start_at": null,
+    "end_at": null,
+    "duracion_segundos": null,
+    "duracion_minutos": null,
+    "palabras_clave": [],
+    "fecha_guardado": "2025-10-13T21:07:18.615946",
+    "version": "1.0"
+  },
+  "transcripcion": {
+    "texto": "Operador: Hola, Cliente: Necesito ayuda",
+    "longitud_caracteres": 39,
+    "longitud_palabras": 5,
+    "tiene_contenido": true
+  }
+}

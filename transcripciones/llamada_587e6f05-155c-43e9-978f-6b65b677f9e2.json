@@ -1,0 +1,20 @@
+{
+  "metadata": {
+    "llamada_id": "587e6f05-155c-43e9-978f-6b65b677f9e2",
+    "customer_name": "Test Cliente",
+    "operator_name": "Test Operador",
+    "start_at": null,
+    "end_at": null,
+    "duracion_segundos": null,
+    "duracion_minutos": null,
+    "palabras_clave": [],
+    "fecha_guardado": "2025-10-13T21:10:05.301584",
+    "version": "1.0"
+  },
+  "transcripcion": {
+    "texto": "Operador: Hola, ¿en qué le puedo ayudar?\nCliente: Tengo una consulta sobre mi servicio.",
+    "longitud_caracteres": 87,
+    "longitud_palabras": 14,
+    "tiene_contenido": true
+  }
+}
