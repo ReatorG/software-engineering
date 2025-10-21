@@ -1,0 +1,20 @@
+# Core
+fastapi==0.118.0
+uvicorn==0.37.0
+pydantic==2.11.9
+pydantic-settings==2.6.1
+
+# Security
+PyJWT==2.10.1
+
+# Database (SQLite es nativo de Python)
+
+# Validation
+email-validator==2.3.0
+
+# Environment
+python-dotenv==1.1.1
+
+# Testing
+pytest==8.3.3
+httpx==0.28.1
