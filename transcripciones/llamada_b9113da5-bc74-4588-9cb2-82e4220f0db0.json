@@ -1,0 +1,23 @@
+{
+  "metadata": {
+    "llamada_id": "b9113da5-bc74-4588-9cb2-82e4220f0db0",
+    "customer_name": "Juan García",
+    "operator_name": "MAria Pérez",
+    "start_at": "2025-02-14T10:00:00",
+    "end_at": "2025-02-14T10:15:00",
+    "duracion_segundos": 900.0,
+    "duracion_minutos": 15.0,
+    "palabras_clave": [
+      "consulta",
+      "servicio"
+    ],
+    "fecha_guardado": "2025-10-21T15:37:58.148330",
+    "version": "1.0"
+  },
+  "transcripcion": {
+    "texto": "Operador: Buenos días, ¿en qué le puedo ayudar?\nCliente: Tengo una consulta sobre mi factura.",
+    "longitud_caracteres": 93,
+    "longitud_palabras": 15,
+    "tiene_contenido": true
+  }
+}

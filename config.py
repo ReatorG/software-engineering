@@ -3,10 +3,6 @@ from pydantic_settings import BaseSettings
 from typing import Optional
 
 class Settings(BaseSettings):
-    """
-    Configuración de la aplicación.
-    Las variables se pueden sobrescribir con variables de entorno.
-    """
     # Configuración del modelo ML
     ml_model_name: str = "mistralai/Mistral-7B-Instruct-v0.3"
     ml_model_device: str = "auto"
@@ -31,8 +27,8 @@ class Settings(BaseSettings):
     database_password: str = "postgres"
     
     class Config:
-        env_file = ".env"  # Lee variables desde archivo .env
-        env_prefix = "APP_"  # Prefijo para variables de entorno
+        env_file = ".env"
+        env_prefix = "APP_" 
 
 # Instancia global de configuración
 settings = Settings()

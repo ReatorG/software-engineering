@@ -9,7 +9,7 @@ class TranscripcionService:
     
     def __init__(self, base_path: str = "transcripciones"):
         self.base_path = Path(base_path)
-        self.base_path.mkdir(exist_ok=True)  # Crea el directorio si no existe
+        self.base_path.mkdir(exist_ok=True)
         print(f"Directorio de transcripciones: {self.base_path.absolute()}")
     
     def guardar_transcripcion(
@@ -85,12 +85,6 @@ class TranscripcionService:
             return None
     
     def listar_transcripciones(self) -> list:
-        """
-        Lista todas las transcripciones disponibles.
-        
-        Returns:
-            list: Lista de IDs de llamadas con transcripciones
-        """
         archivos = []
         for archivo in self.base_path.iterdir():
             if archivo.is_file() and archivo.name.startswith('llamada_'):
@@ -106,24 +100,14 @@ class TranscripcionService:
         return sorted(archivos, key=lambda x: x['fecha_modificacion'], reverse=True)
     
     def eliminar_transcripcion(self, llamada_id: str) -> bool:
-        """
-        Elimina la transcripción de una llamada.
-        
-        Args:
-            llamada_id: ID de la llamada
-            
-        Returns:
-            bool: True si se eliminó, False si no existía
-        """
         eliminados = 0
-        
-        # Buscar archivos .txt y .json
+
         for extension in ['.txt', '.json']:
             filename = f"llamada_{llamada_id}{extension}"
             filepath = self.base_path / filename
             
             if filepath.exists():
-                filepath.unlink()  # Elimina el archivo
+                filepath.unlink()
                 eliminados += 1
         
         return eliminados > 0

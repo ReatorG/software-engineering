@@ -6,21 +6,11 @@ from APP.Domain.ModelManager import ModelManager
 from config import settings
 
 def analizar_llamada(transcripcion: str) -> dict:
-    """
-    Analiza una transcripción de llamada usando el modelo ML.
-    
-    Args:
-        transcripcion: Texto de la conversación a analizar
-        
-    Returns:
-        dict: Resultado del análisis con métricas y evaluaciones
-    """
     try:
-        # Usar ModelManager para reutilizar el modelo cargado
+
         manager = ModelManager()
         tokenizer, model = manager.get_model()
         
-        # Prompt más conciso y enfocado en JSON
         prompt = f"""[INST] Analiza esta transcripción de llamada y devuelve SOLO un JSON válido con estas métricas:
 
 {{
@@ -49,10 +39,9 @@ def analizar_llamada(transcripcion: str) -> dict:
 Transcripción: {transcripcion}
 [/INST]"""
 
-        # Tokenizar y generar
         inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
         
-        with torch.no_grad():  # Ahorra memoria
+        with torch.no_grad():
             outputs = model.generate(
                 **inputs,
                 max_new_tokens=settings.max_new_tokens,
@@ -60,11 +49,8 @@ Transcripción: {transcripcion}
                 repetition_penalty=1.05,
                 pad_token_id=tokenizer.eos_token_id
             )
-        
-        # Decodificar respuesta
         response = tokenizer.decode(outputs[0], skip_special_tokens=True)
-        
-        # Extraer solo la parte JSON (después del prompt)
+
         json_start = response.find('{')
         json_end = response.rfind('}') + 1
         
@@ -95,40 +81,4 @@ Transcripción: {transcripcion}
         }
 
 
-def analizar_llamada_simple(transcripcion: str) -> str:
-    """
-    Versión simple que devuelve texto plano (para debugging).
-    
-    Args:
-        transcripcion: Texto de la conversación
-        
-    Returns:
-        str: Análisis en texto plano
-    """
-    try:
-        manager = ModelManager()
-        tokenizer, model = manager.get_model()
-        
-        prompt = f"""[INST] Analiza brevemente esta transcripción de llamada del 1-10:
 
-Transcripción: {transcripcion}
-[/INST]"""
-
-        inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
-        
-        with torch.no_grad():
-            outputs = model.generate(
-                **inputs,
-                max_new_tokens=200,
-                do_sample=False,
-                pad_token_id=tokenizer.eos_token_id
-            )
-        
-        response = tokenizer.decode(outputs[0], skip_special_tokens=True)
-        
-        # Extraer solo la respuesta (después del prompt)
-        response_start = response.find("[/INST]") + 7
-        return response[response_start:].strip() if response_start > 6 else response
-        
-    except Exception as e:
-        return f"Error en análisis simple: {str(e)}"

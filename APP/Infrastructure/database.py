@@ -8,16 +8,8 @@ from typing import Optional, List, Dict, Any
 from config import settings
 
 class DatabaseManager:
-    """
-    Administrador de base de datos SQLite para la aplicación.
-    
-    Maneja todas las operaciones de base de datos de forma centralizada.
-    """
     
     def __init__(self):
-        """
-        Inicializa la conexión a PostgreSQL usando configuración.
-        """
         self.connection_params = {
             'host': settings.database_host,
             'port': settings.database_port,
@@ -26,13 +18,11 @@ class DatabaseManager:
             'password': settings.database_password
         }
         
-        # Verificar conexión y crear tablas
         self._test_connection()
         self._create_tables()
-        logging.info(f"🐘 PostgreSQL conectado: {settings.database_host}:{settings.database_port}")
+        logging.info(f"PostgreSQL conectado: {settings.database_host}:{settings.database_port}")
     
     def _get_connection(self):
-        """Obtiene una conexión a PostgreSQL."""
         try:
             conn = psycopg2.connect(**self.connection_params)
             return conn
@@ -41,22 +31,20 @@ class DatabaseManager:
             raise
     
     def _test_connection(self):
-        """Prueba la conexión a la base de datos."""
         try:
             with self._get_connection() as conn:
                 with conn.cursor() as cursor:
                     cursor.execute("SELECT version();")
                     version = cursor.fetchone()[0]
-                    logging.info(f"✅ Conexión PostgreSQL exitosa: {version}")
+                    logging.info(f"Conexión PostgreSQL exitosa: {version}")
         except Exception as e:
-            logging.error(f"❌ Error conectando a PostgreSQL: {e}")
+            logging.error(f"Error conectando a PostgreSQL: {e}")
             raise
     
     def _create_tables(self):
         """Crea las tablas necesarias en PostgreSQL."""
         with self._get_connection() as conn:
             with conn.cursor() as cursor:
-                # Tabla de llamadas
                 cursor.execute("""
                     CREATE TABLE IF NOT EXISTS llamadas (
                         id VARCHAR(255) PRIMARY KEY,
@@ -72,7 +60,6 @@ class DatabaseManager:
                     )
                 """)
                 
-                # Tabla de análisis ML
                 cursor.execute("""
                     CREATE TABLE IF NOT EXISTS analisis_llamadas (
                         id SERIAL PRIMARY KEY,
@@ -95,7 +82,6 @@ class DatabaseManager:
                     )
                 """)
                 
-                # Tabla de operadores
                 cursor.execute("""
                     CREATE TABLE IF NOT EXISTS operadores (
                         id SERIAL PRIMARY KEY,
@@ -107,7 +93,6 @@ class DatabaseManager:
                     )
                 """)
                 
-                # Crear índices para mejor performance
                 cursor.execute("""
                     CREATE INDEX IF NOT EXISTS idx_llamadas_operator 
                     ON llamadas (operator_name)
@@ -119,22 +104,12 @@ class DatabaseManager:
                 """)
                 
                 conn.commit()
-                logging.info("✅ Tablas PostgreSQL creadas/verificadas")
+                logging.info("Tablas PostgreSQL creadas/verificadas")
 
-    # MÉTODOS PARA LLAMADAS
+
     def guardar_llamada(self, llamada_data: Dict[str, Any]) -> str:
-        """
-        Guarda una nueva llamada en PostgreSQL.
-        
-        Args:
-            llamada_data: Diccionario con los datos de la llamada
-            
-        Returns:
-            str: ID de la llamada guardada
-        """
         with self._get_connection() as conn:
             with conn.cursor() as cursor:
-                # Calcular duración si tenemos ambas fechas
                 duration = None
                 if llamada_data.get('start_at') and llamada_data.get('end_at'):
                     start = datetime.fromisoformat(llamada_data['start_at'].replace('Z', '+00:00'))
@@ -158,19 +133,10 @@ class DatabaseManager:
                 ))
                 
                 conn.commit()
-                logging.info(f"📞 Llamada guardada: {llamada_data['id']}")
+                logging.info(f"Llamada guardada: {llamada_data['id']}")
                 return llamada_data['id']
     
     def obtener_llamada(self, llamada_id: str) -> Optional[Dict[str, Any]]:
-        """
-        Obtiene una llamada por su ID desde PostgreSQL.
-        
-        Args:
-            llamada_id: ID de la llamada
-            
-        Returns:
-            Dict: Datos de la llamada o None si no existe
-        """
         with self._get_connection() as conn:
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
                 cursor.execute("""
@@ -180,20 +146,10 @@ class DatabaseManager:
                 row = cursor.fetchone()
                 if row:
                     data = dict(row)
-                    # PostgreSQL ya maneja JSON automáticamente
                     return data
                 return None
     
     def listar_llamadas(self, limit: int = 50) -> List[Dict[str, Any]]:
-        """
-        Lista las llamadas más recientes desde PostgreSQL.
-        
-        Args:
-            limit: Número máximo de llamadas a devolver
-            
-        Returns:
-            List: Lista de llamadas
-        """
         with self._get_connection() as conn:
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
                 cursor.execute("""
@@ -209,18 +165,7 @@ class DatabaseManager:
                 
                 return llamadas
     
-    # MÉTODOS PARA ANÁLISIS
     def guardar_analisis(self, llamada_id: str, analisis_data: Dict[str, Any]) -> int:
-        """
-        Guarda el resultado de un análisis ML en PostgreSQL.
-        
-        Args:
-            llamada_id: ID de la llamada analizada
-            analisis_data: Resultado del análisis ML
-            
-        Returns:
-            int: ID del análisis guardado
-        """
         with self._get_connection() as conn:
             with conn.cursor() as cursor:
                 cursor.execute("""
@@ -251,19 +196,10 @@ class DatabaseManager:
                 
                 analisis_id = cursor.fetchone()[0]
                 conn.commit()
-                logging.info(f"📊 Análisis guardado: {analisis_id} para llamada {llamada_id}")
+                logging.info(f"Análisis guardado: {analisis_id} para llamada {llamada_id}")
                 return analisis_id
     
     def obtener_analisis(self, llamada_id: str) -> Optional[Dict[str, Any]]:
-        """
-        Obtiene el análisis más reciente de una llamada desde PostgreSQL.
-        
-        Args:
-            llamada_id: ID de la llamada
-            
-        Returns:
-            Dict: Datos del análisis o None si no existe
-        """
         with self._get_connection() as conn:
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
                 cursor.execute("""
@@ -276,25 +212,14 @@ class DatabaseManager:
                 row = cursor.fetchone()
                 if row:
                     data = dict(row)
-                    # PostgreSQL maneja JSON automáticamente, pero por seguridad:
                     if data.get('aspectos_positivos') and isinstance(data['aspectos_positivos'], str):
                         data['aspectos_positivos'] = json.loads(data['aspectos_positivos'])
                     if data.get('areas_mejora') and isinstance(data['areas_mejora'], str):
                         data['areas_mejora'] = json.loads(data['areas_mejora'])
                     return data
                 return None
-    
-    # MÉTODOS DE ESTADÍSTICAS
+
     def obtener_estadisticas_operador(self, operator_name: str) -> Dict[str, Any]:
-        """
-        Obtiene estadísticas de un operador específico desde PostgreSQL.
-        
-        Args:
-            operator_name: Nombre del operador
-            
-        Returns:
-            Dict: Estadísticas del operador
-        """
         with self._get_connection() as conn:
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
                 cursor.execute("""
@@ -316,5 +241,4 @@ class DatabaseManager:
                     return dict(row)
                 return {}
 
-# Instancia global para usar en toda la aplicación
 db_manager = DatabaseManager()

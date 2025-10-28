@@ -24,7 +24,6 @@ class ModelManager:
             
             self._tokenizer = AutoTokenizer.from_pretrained(settings.ml_model_name)
             
-            # Convertir string a tipo torch
             dtype_mapping = {
                 "float16": torch.float16,
                 "float32": torch.float32,

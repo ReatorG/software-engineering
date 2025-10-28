@@ -23,23 +23,13 @@ class Llamda(BaseModel):
                 "palabras_clave": ["keyword1", "keyword2"]
             }
         }
-    def duration(self) -> Optional[float]:
-        """Calculate the duration of the Llamda in hours."""
+    def duracion(self) -> Optional[float]:
         if self.end_at and self.start_at:
             delta = self.end_at - self.start_at
             return delta.total_seconds() / 3600
         return None
     
     def guardar_transcripcion(self, servicio_transcripcion=None) -> Optional[str]:
-        """
-        Guarda la transcripción en un archivo si existe.
-        
-        Args:
-            servicio_transcripcion: Instancia del TranscripcionService
-            
-        Returns:
-            str: Ruta del archivo guardado o None si no hay transcripción
-        """
         if not self.transcripcion:
             return None
         
@@ -63,15 +53,6 @@ class Llamda(BaseModel):
         )
     
     def cargar_transcripcion(self, servicio_transcripcion=None) -> bool:
-        """
-        Carga la transcripción desde archivo si existe.
-        
-        Args:
-            servicio_transcripcion: Instancia del TranscripcionService
-            
-        Returns:
-            bool: True si se cargó la transcripción, False si no existía
-        """
         if not servicio_transcripcion:
             from APP.Infrastructure.TranscripcionService import TranscripcionService
             servicio_transcripcion = TranscripcionService()
